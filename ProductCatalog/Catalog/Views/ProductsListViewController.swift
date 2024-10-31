@@ -2,12 +2,15 @@ import UIKit
 
 final class ProductListViewController: UIViewController {
     
+    // MARK: - Properties
     private let tableView = UITableView()
     private let viewModel: ProductListViewModel
     private let refreshControl = UIRefreshControl()
     private let imageLoader: ImageLoaderProtocol
     private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private var isFirstLoad = true
     
+    // MARK: - Initializers
     init(viewModel: ProductListViewModel, imageLoader: ImageLoaderProtocol) {
         self.viewModel = viewModel
         self.imageLoader = imageLoader
@@ -18,6 +21,7 @@ final class ProductListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
@@ -26,6 +30,7 @@ final class ProductListViewController: UIViewController {
         viewModel.loadProducts()
     }
     
+    // MARK: - UI Setup
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
@@ -54,6 +59,7 @@ final class ProductListViewController: UIViewController {
         ])
     }
     
+    // MARK: - Bindings
     private func bindViewModel() {
         viewModel.onProductsUpdated = { [weak self] in
             self?.tableView.reloadData()
@@ -66,14 +72,17 @@ final class ProductListViewController: UIViewController {
         }
         
         viewModel.onLoadingStatusChanged = { [weak self] isLoading in
-            if isLoading {
-                self?.activityIndicator.startAnimating()
+            guard let self = self else { return }
+            if isLoading && self.isFirstLoad {
+                self.activityIndicator.startAnimating()
             } else {
-                self?.activityIndicator.stopAnimating()
+                self.activityIndicator.stopAnimating()
+                self.isFirstLoad = false
             }
         }
     }
     
+    // MARK: - Actions
     @objc private func refreshData() {
         viewModel.cancelLoading()
         viewModel.refreshProducts()
@@ -88,9 +97,8 @@ final class ProductListViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension ProductListViewController: UITableViewDataSource, UITableViewDelegate {
-    // MARK: - UITableViewDataSource
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.products.count
     }
@@ -103,9 +111,7 @@ extension ProductListViewController: UITableViewDataSource, UITableViewDelegate 
         cell.configure(with: product, imageLoader: imageLoader)
         return cell
     }
-    
-    // MARK: - UITableViewDelegate
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height

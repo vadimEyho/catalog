@@ -1,21 +1,26 @@
 import Foundation
 
 @MainActor
-class ProductListViewModel {
+final class ProductListViewModel {
+    
+    // MARK: - Properties
     private let networkService: NetworkServiceProtocol
     private(set) var products = [Product]()
     private var currentPage = 1
     private let itemsPerPage = 20
     private(set) var isLoading = false
     
+    // MARK: - Callbacks
     var onProductsUpdated: (() -> Void)?
     var onError: ((Error) -> Void)?
     var onLoadingStatusChanged: ((Bool) -> Void)?
     
+    // MARK: - Initializer
     init(networkService: NetworkServiceProtocol) {
         self.networkService = networkService
     }
     
+    // MARK: - Data Loading
     func loadProducts() {
         Task {
             await loadProductsInternal()
@@ -46,6 +51,7 @@ class ProductListViewModel {
         }
     }
     
+    // MARK: - Pagination & Refresh
     func refreshProducts() {
         currentPage = 1
         products.removeAll()
@@ -58,11 +64,13 @@ class ProductListViewModel {
         loadProducts()
     }
     
+    // MARK: - Cancel
     func cancelLoading() {
         networkService.cancelFetch()
         isLoading = false
     }
     
+    // MARK: - Error Handling
     private func handleError(_ error: Error) {
         onError?(error)
     }

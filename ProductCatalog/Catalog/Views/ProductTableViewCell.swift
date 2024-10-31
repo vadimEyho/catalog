@@ -1,10 +1,12 @@
 import UIKit
 
-class ProductTableViewCell: UITableViewCell {
+final class ProductTableViewCell: UITableViewCell {
     
+    // MARK: - Properties
     static let identifier = "ProductTableViewCell"
     private var currentImageURL: String?
     
+    // MARK: - UI Elements
     private let productImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -38,6 +40,7 @@ class ProductTableViewCell: UITableViewCell {
         return label
     }()
     
+    // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -47,6 +50,7 @@ class ProductTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Configuration
     func configure(with product: Product, imageLoader: ImageLoaderProtocol) {
         titleLabel.text = product.title
         descriptionLabel.text = product.description
@@ -61,6 +65,7 @@ class ProductTableViewCell: UITableViewCell {
         }
     }
     
+    // MARK: - Setup UI
     private func setupUI() {
         contentView.addSubview(productImageView)
         contentView.addSubview(titleLabel)
@@ -68,23 +73,23 @@ class ProductTableViewCell: UITableViewCell {
         contentView.addSubview(priceLabel)
         
         NSLayoutConstraint.activate([
-            // Constraints for productImageView
+            // productImageView constraints
             productImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             productImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             productImageView.widthAnchor.constraint(equalToConstant: 64),
             productImageView.heightAnchor.constraint(equalToConstant: 64),
             
-            // Constraints for titleLabel
+            // titleLabel constraints
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            // Constraints for descriptionLabel
+            // descriptionLabel constraints
             descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             descriptionLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 16),
             descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            // Constraints for priceLabel
+            // priceLabel constraints
             priceLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 4),
             priceLabel.leadingAnchor.constraint(equalTo: productImageView.trailingAnchor, constant: 16),
             priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),

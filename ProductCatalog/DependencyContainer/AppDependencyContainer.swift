@@ -1,8 +1,7 @@
 import UIKit
 
 final class AppDependencyContainer {
-    
-    // Метод для создания rootViewController со всеми зависимостями
+    /// Creates the root view controller with all dependencies injected
     @MainActor
     func makeRootViewController() -> UIViewController {
         let networkService = makeNetworkService()
@@ -11,8 +10,7 @@ final class AppDependencyContainer {
         return makeProductListViewController(viewModel: viewModel, imageLoader: imageLoader)
     }
     
-    // Фабричный методы:
-    
+    // MARK: - Factory Methods
     private func makeProductListViewController(viewModel: ProductListViewModel, imageLoader: ImageLoaderProtocol) -> ProductListViewController {
         return ProductListViewController(viewModel: viewModel, imageLoader: imageLoader)
     }
