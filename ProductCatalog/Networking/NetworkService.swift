@@ -1,19 +1,24 @@
 import Foundation
 
-final class NetworkService: NetworkServiceProtocol {
+final class NetworkService {
     
+    // MARK: - Propertie
     private let baseURL = "https://dummyjson.com"
     private let endpoint = "/products"
     private var dataTask: URLSessionDataTask?
     private let lockQueue = DispatchQueue(label: "com.networkService.lockQueue", attributes: .concurrent)
     
+    // MARK: - Task Management
     func cancelFetch() {
         lockQueue.async(flags: .barrier) {
             self.dataTask?.cancel()
             self.dataTask = nil
         }
     }
-    
+}
+
+// MARK: - NetworkServiceProtocol Implementation
+extension NetworkService: NetworkServiceProtocol {
     func fetchProducts(page: Int = 1, limit: Int = 20) async throws -> [Product] {
         let urlString = "\(baseURL + endpoint)?skip=\((page - 1) * limit)&limit=\(limit)"
         guard let url = URL(string: urlString) else {
