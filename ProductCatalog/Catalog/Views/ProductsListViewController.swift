@@ -4,14 +4,15 @@ final class ProductListViewController: UIViewController {
     
     // MARK: - Properties
     private let tableView = UITableView()
-    private let viewModel: ProductListViewModel
+    private let viewModel: ProductListViewModelProtocol
     private let refreshControl = UIRefreshControl()
     private let imageLoader: ImageLoaderProtocol
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var isFirstLoad = true
     
     // MARK: - Initializers
-    init(viewModel: ProductListViewModel, imageLoader: ImageLoaderProtocol) {
+    init(viewModel: ProductListViewModelProtocol,
+         imageLoader: ImageLoaderProtocol) {
         self.viewModel = viewModel
         self.imageLoader = imageLoader
         super.init(nibName: nil, bundle: nil)
@@ -61,17 +62,17 @@ final class ProductListViewController: UIViewController {
     
     // MARK: - Bindings
     private func bindViewModel() {
-        viewModel.onProductsUpdated = { [weak self] in
+        viewModel.setOnProductsUpdated { [weak self] in
             self?.tableView.reloadData()
             self?.refreshControl.endRefreshing()
         }
         
-        viewModel.onError = { [weak self] error in
+        viewModel.setOnError { [weak self] error in
             self?.showErrorAlert(error)
             self?.refreshControl.endRefreshing()
         }
         
-        viewModel.onLoadingStatusChanged = { [weak self] isLoading in
+        viewModel.setOnLoadingStatusChanged { [weak self] isLoading in
             guard let self = self else { return }
             if isLoading && self.isFirstLoad {
                 self.activityIndicator.startAnimating()
@@ -109,6 +110,7 @@ extension ProductListViewController: UITableViewDataSource, UITableViewDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: ProductTableViewCell.identifier, for: indexPath) as! ProductTableViewCell
         let product = viewModel.products[indexPath.row]
         cell.configure(with: product, imageLoader: imageLoader)
+        cell.selectionStyle = .none 
         return cell
     }
 

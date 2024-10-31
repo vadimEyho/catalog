@@ -1,6 +1,7 @@
 import UIKit
 
 final class AppDependencyContainer {
+    
     /// Creates the root view controller with all dependencies injected
     @MainActor
     func makeRootViewController() -> UIViewController {
@@ -11,12 +12,12 @@ final class AppDependencyContainer {
     }
     
     // MARK: - Factory Methods
-    private func makeProductListViewController(viewModel: ProductListViewModel, imageLoader: ImageLoaderProtocol) -> ProductListViewController {
+    private func makeProductListViewController(viewModel: ProductListViewModelProtocol, imageLoader: ImageLoaderProtocol) -> ProductListViewController {
         return ProductListViewController(viewModel: viewModel, imageLoader: imageLoader)
     }
     
     @MainActor
-    private func makeProductListViewModel(networkService: NetworkServiceProtocol) -> ProductListViewModel {
+    private func makeProductListViewModel(networkService: NetworkServiceProtocol) -> ProductListViewModelProtocol {
         return ProductListViewModel(networkService: networkService)
     }
     

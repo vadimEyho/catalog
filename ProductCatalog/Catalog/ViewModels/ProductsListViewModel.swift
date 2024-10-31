@@ -1,7 +1,6 @@
 import Foundation
 
-@MainActor
-final class ProductListViewModel {
+final class ProductListViewModel: ProductListViewModelProtocol {
     
     // MARK: - Properties
     private let networkService: NetworkServiceProtocol
@@ -11,13 +10,26 @@ final class ProductListViewModel {
     private(set) var isLoading = false
     
     // MARK: - Callbacks
-    var onProductsUpdated: (() -> Void)?
-    var onError: ((Error) -> Void)?
-    var onLoadingStatusChanged: ((Bool) -> Void)?
+    private var onProductsUpdated: (() -> Void)?
+    private var onError: ((Error) -> Void)?
+    private var onLoadingStatusChanged: ((Bool) -> Void)?
     
     // MARK: - Initializer
     init(networkService: NetworkServiceProtocol) {
         self.networkService = networkService
+    }
+    
+    // MARK: - Callback Setters
+    func setOnProductsUpdated(_ callback: @escaping () -> Void) {
+        onProductsUpdated = callback
+    }
+    
+    func setOnError(_ callback: @escaping (Error) -> Void) {
+        onError = callback
+    }
+    
+    func setOnLoadingStatusChanged(_ callback: @escaping (Bool) -> Void) {
+        onLoadingStatusChanged = callback
     }
     
     // MARK: - Data Loading
